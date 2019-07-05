@@ -1,4 +1,4 @@
-package rain;
+package rain.spring;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;

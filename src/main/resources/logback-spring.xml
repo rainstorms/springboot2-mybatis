@@ -9,7 +9,9 @@
     <jmxConfigurator/>
 
     <logger name="org.springframework.web" level="DEBUG"/>
-    <logger name="rain" level="DEBUG"/>
+
+    <define name="rainLevel" class="rain.spring.DevLogLevelPropertyDefiner"/>
+    <logger name="rain" level="${rainLevel}"/>
 
     <appender name="dailyRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -30,4 +32,5 @@
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="dailyRollingFileAppender"/>
     </root>
+
 </configuration>
