@@ -1,4 +1,4 @@
-package rain.controller;
+package rain.utils;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
