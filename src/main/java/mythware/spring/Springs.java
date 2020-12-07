@@ -1,8 +1,8 @@
-package rain.spring;
+package mythware.spring;
 
 
 import org.springframework.stereotype.Component;
 
-@Component("rainSprings")
+@Component("Springs")
 public class Springs extends SpringContext {
 }

@@ -9,6 +9,9 @@ server:
     whitelabel:
       enabled: false
 
+logging:
+  level:
+    rain.dao: debug
 
 spring:
   redis:

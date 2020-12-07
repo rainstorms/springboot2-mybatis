@@ -1,4 +1,4 @@
-package rain.domain;
+package mythware.domain;
 
 public class User {
     private String userName;

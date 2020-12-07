@@ -1,4 +1,4 @@
-package rain.domain;
+package mythware.domain;
 
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -10,9 +10,9 @@ import java.util.logging.Logger;
 public class TestDataSource implements javax.sql.DataSource {
     @Override public Connection getConnection() throws SQLException {
         //1.JDBC所需的四个参数4个准备：user,password,url,driverClass(连接数据库所需的驱动)
-        String url = "jdbc:mysql://test.go.easy-hi.com:33306/hanergyweiwei?useUnicode=true&&characterEncoding=UTF-8&connectTimeout=1000&autoReconnect=true";
-        String user = "hanergyweiwei";
-        String password = "AABC-2AFBB52E1E8";
+        String url = "jdbc:mysql://192.168.0.1:6061/wxtv?useUnicode=true&&characterEncoding=UTF-8&connectTimeout=1000&autoReconnect=true&useSSL=false";
+        String user = "cp";
+        String password = "Tv@xiyangyang";
         String driverClass = "com.mysql.jdbc.Driver";
 
         try {
