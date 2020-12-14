@@ -9,6 +9,7 @@ import mythware.dto.OrderBannersDto;
 import mythware.service.BannerService;
 import mythware.utils.DateTimes;
 import mythware.vo.BannerVo;
+import mythware.vo.QueryShowBannerVo;
 import mythware.vo.ResultVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +121,17 @@ public class BannerController {
     public List<BannerVo> queryBanners() {
         List<Banner> banners = service.queryBanners();
         return BannerVo.convert(banners);
+    }
+
+    /**
+     * 查询所有的banner
+     *
+     * @return
+     */
+    @GetMapping("/queryShowBanners")
+    public List<QueryShowBannerVo> queryShowBanners() {
+        List<Banner> banners = service.queryShowBanners();
+        return QueryShowBannerVo.convert(banners);
     }
 
     /**

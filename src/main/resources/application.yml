@@ -13,7 +13,7 @@ spring:
   datasource:
     username: root
     password: 123456
-    url: jdbc:mysql://10.88.254.43:3306/mythware_edu?useUnicode=true&&characterEncoding=UTF-8&connectTimeout=1000&autoReconnect=true&useSSL=false
+    url: jdbc:mysql://10.88.254.43:3306/mythware_website?useUnicode=true&&characterEncoding=UTF-8&connectTimeout=1000&autoReconnect=true&useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 mybatis:

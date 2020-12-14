@@ -17,19 +17,19 @@ public class EditNewsDto {
     private int state; // 状态 详情见 NewsState
 
     public News toAddNews() {
-        News banner = toNews();
+        News news = toNews();
 
-        banner.setId(Id.next());
-        return banner;
+        news.setId(Id.next());
+        return news;
     }
 
     public News toNews() {
-        News banner = new News();
-        BeanUtils.copyProperties(this, banner);
+        News news = new News();
+        BeanUtils.copyProperties(this, news);
 
         if (StringUtils.isNotBlank(this.showTime))
-            banner.setShowTime(DateTimes.parseyyyyMMddHHmmssString(this.showTime));
+            news.setShowTime(DateTimes.parseyyyyMMddHHmmssString(this.showTime));
 
-        return banner;
+        return news;
     }
 }

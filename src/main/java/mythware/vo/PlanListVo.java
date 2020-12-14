@@ -1,10 +1,7 @@
 package mythware.vo;
 
 import com.google.common.collect.Lists;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import mythware.domain.Plan;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;

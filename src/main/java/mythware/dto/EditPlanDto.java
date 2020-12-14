@@ -16,15 +16,15 @@ public class EditPlanDto {
     private int state; // 状态 详情见 PlanState
 
     public Plan toAddPlan() {
-        Plan banner = toPlan();
+        Plan plan = toPlan();
 
-        banner.setId(Id.next());
-        return banner;
+        plan.setId(Id.next());
+        return plan;
     }
 
     public Plan toPlan() {
-        Plan banner = new Plan();
-        BeanUtils.copyProperties(this, banner);
-        return banner;
+        Plan plan = new Plan();
+        BeanUtils.copyProperties(this, plan);
+        return plan;
     }
 }
