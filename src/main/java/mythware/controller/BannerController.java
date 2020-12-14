@@ -26,6 +26,13 @@ public class BannerController {
 
     @Autowired BannerService service;
 
+    private static final int TITLE_EMPTY = 511;
+    private static final int TITLE_SIZE_OVER_30 = 512;
+    private static final int IMAGE_EMPTY = 513;
+    private static final int WRONG_IMAGE_FORMAT = 514;
+    private static final int WRONG_TIME_FORMAT = 515;
+    private static final int WRONG_TIME = 516;
+
     /**
      * 添加和修改banner
      *
@@ -41,21 +48,21 @@ public class BannerController {
         if (null == bannerDto.getId()) { // 没有id 说明是新的banner
             Banner banner = bannerDto.toAddBanner();
             int i = service.addBanner(banner);
-            return i > 0 ? ResultVo.ok("添加成功") : ResultVo.fail(501, "添加失败");
+            return i > 0 ? ResultVo.ok("添加成功") : ResultVo.fail("添加失败");
         }
 
         Banner banner = bannerDto.toBanner();
         int i = service.updateBanner(banner);
-        return i > 0 ? ResultVo.ok("修改成功") : ResultVo.fail(501, "修改失败");
+        return i > 0 ? ResultVo.ok("修改成功") : ResultVo.fail("修改失败");
     }
 
     private ResultVo checkEditBanner(EditBannerDto bannerDto) {
         int titleLength = StringUtils.trim(bannerDto.getTitle()).length();
         if (titleLength == 0)
-            return ResultVo.fail(511, "title不能为空");
+            return ResultVo.fail(TITLE_EMPTY, "title不能为空");
 
         if (titleLength > 30)
-            return ResultVo.fail(512, "title不能超过30个字");
+            return ResultVo.fail(TITLE_SIZE_OVER_30, "title不能超过30个字");
 
         ResultVo resultVo = checkImage(bannerDto.getImage2560());
         if (null != resultVo) return resultVo;
@@ -76,10 +83,10 @@ public class BannerController {
     }
 
     private ResultVo checkImage(String imageBase64) {
-        if (imageBase64 == null) return ResultVo.fail(513, "图片不能为空");
+        if (imageBase64 == null) return ResultVo.fail(IMAGE_EMPTY, "图片不能为空");
 
         String regex = "^data[:]image[/]([a-z])+;base64,[A-Za-z0-9+/]*";
-        if (!imageBase64.matches(regex)) return ResultVo.fail(514, "图片格式不对");
+        if (!imageBase64.matches(regex)) return ResultVo.fail(WRONG_IMAGE_FORMAT, "图片格式不对");
 
         return null;
     }
@@ -91,11 +98,11 @@ public class BannerController {
         try {
             dateTime = DateTimes.parseyyyyMMddHHmmssString(time);
         } catch (Exception e) {
-            return ResultVo.fail(515, "传入的" + timeName + "日期格式不正确");
+            return ResultVo.fail(WRONG_TIME_FORMAT, "传入的" + timeName + "日期格式不正确");
         }
 
         if (LocalDateTime.now().isAfter(dateTime))
-            return ResultVo.fail(516, timeName + "不能在当前时间之前");
+            return ResultVo.fail(WRONG_TIME, timeName + "不能在当前时间之前");
 
         return null;
     }
@@ -157,7 +164,7 @@ public class BannerController {
     public ResultVo enableBanner(@RequestBody EnableBannerDto bannerDto) {
         Integer newState = bannerDto.getState();
         Integer oldState = Banner.BannerState.ENABLE.getCode();
-        if (Banner.BannerState.ENABLE.getCode() == newState) { // 如果新状态是启用，那老状态就是禁用
+        if (Banner.BannerState.ENABLE.getCode().equals(newState)) { // 如果新状态是启用，那老状态就是禁用
             oldState = Banner.BannerState.DISABLE.getCode();
         }
 

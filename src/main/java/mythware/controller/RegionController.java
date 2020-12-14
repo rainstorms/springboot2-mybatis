@@ -18,8 +18,13 @@ public class RegionController {
 
     @Autowired RegionService service;
 
+    private static final int REGION_EMPTY = 511;
+    private static final int NAME_EMPTY = 512;
+    private static final int MOBILE_EMPTY = 513;
+    private static final int WRONG_EMAIL = 514;
+
     /**
-     * 添加和修改region
+     * 添加和修改 region
      *
      * @param regionDto
      * @return
@@ -33,26 +38,26 @@ public class RegionController {
         if (null == regionDto.getId()) { // 没有id 说明是新的region
             Region region = regionDto.toAddRegion();
             int i = service.addRegion(region);
-            return i > 0 ? ResultVo.ok("添加成功") : ResultVo.fail(501, "添加失败");
+            return i > 0 ? ResultVo.ok("添加成功") : ResultVo.fail("添加失败");
         }
 
         Region region = regionDto.toRegion();
         int i = service.updateRegion(region);
-        return i > 0 ? ResultVo.ok("修改成功") : ResultVo.fail(501, "修改失败");
+        return i > 0 ? ResultVo.ok("修改成功") : ResultVo.fail("修改失败");
     }
 
     private ResultVo checkEditRegion(EditRegionDto regionDto) {
         if (StringUtils.isBlank(regionDto.getRegion()))
-            return ResultVo.fail(511, "region 不能为空");
+            return ResultVo.fail(REGION_EMPTY, "region 不能为空");
 
         if (StringUtils.isBlank(regionDto.getName()))
-            return ResultVo.fail(512, "name 不能为空");
+            return ResultVo.fail(NAME_EMPTY, "name 不能为空");
 
         if (StringUtils.isBlank(regionDto.getMobile()))
-            return ResultVo.fail(513, "mobile 不能为空");
+            return ResultVo.fail(MOBILE_EMPTY, "mobile 不能为空");
 
         if (!regionDto.getEmail().endsWith("@mythware.com"))
-            return ResultVo.fail(514, "email 格式不对");
+            return ResultVo.fail(WRONG_EMAIL, "email 格式不对");
 
         return null;
     }

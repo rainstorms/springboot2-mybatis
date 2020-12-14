@@ -22,6 +22,12 @@ public class PlanController {
 
     @Autowired PlanService service;
 
+    private static final int TITLE_EMPTY = 511;
+    private static final int TITLE_SIZE_OVER_30 = 512;
+    private static final int INTRODUCTION_EMPTY = 513;
+    private static final int CONTENT_EMPTY = 514;
+    private static final int WRONG_STATE = 515;
+
     /**
      * 添加和修改plan
      *
@@ -37,31 +43,31 @@ public class PlanController {
         if (null == planDto.getId()) { // 没有id 说明是新的plan
             Plan plan = planDto.toAddPlan();
             int i = service.addPlan(plan);
-            return i > 0 ? ResultVo.ok("添加成功") : ResultVo.fail(501, "添加失败");
+            return i > 0 ? ResultVo.ok("添加成功") : ResultVo.fail("添加失败");
         }
 
         Plan plan = planDto.toPlan();
         int i = service.updatePlan(plan);
-        return i > 0 ? ResultVo.ok("修改成功") : ResultVo.fail(501, "修改失败");
+        return i > 0 ? ResultVo.ok("修改成功") : ResultVo.fail("修改失败");
     }
 
     private ResultVo checkEditPlan(EditPlanDto planDto) {
         if (StringUtils.isBlank(planDto.getIntroduction()))
-            return ResultVo.fail(514, "introduction不能为空");
+            return ResultVo.fail(INTRODUCTION_EMPTY, "introduction不能为空");
 
         int titleLength = StringUtils.trim(planDto.getTitle()).length();
         if (titleLength == 0)
-            return ResultVo.fail(511, "title不能为空");
+            return ResultVo.fail(TITLE_EMPTY, "title不能为空");
 
         if (titleLength > 30)
-            return ResultVo.fail(512, "title不能超过30个字");
+            return ResultVo.fail(TITLE_SIZE_OVER_30, "title不能超过30个字");
 
         if (StringUtils.isBlank(planDto.getContent()))
-            return ResultVo.fail(513, "content不能为空");
+            return ResultVo.fail(CONTENT_EMPTY, "content不能为空");
 
         int state = planDto.getState();
         if (!Plan.getValidStates().contains(state))
-            return ResultVo.fail(515, "state 值不正确");
+            return ResultVo.fail(WRONG_STATE, "state 值不正确");
 
         return null;
     }
