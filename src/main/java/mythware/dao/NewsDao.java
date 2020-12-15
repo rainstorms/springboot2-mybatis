@@ -11,15 +11,14 @@ import java.util.Set;
 @Repository
 public interface NewsDao {
 
-
     String selectWebsiteNewsPrefix = "SELECT  ID id ,TITLE title ,INTRODUCTION introduction" +
             " ,CONTENT content ,SHOW_TIME showTime ,STATE state ,CREATE_TIME createTime ,UPDATE_TIME updateTime " +
             "    FROM  website_news ";
 
-    @Select(selectWebsiteNewsPrefix + " WHERE ID = #{id}")
+    @Select(selectWebsiteNewsPrefix + " WHERE STATE != 0 and ID = #{id}")
     News findNews(String id);
 
-    @Select(selectWebsiteNewsPrefix + " WHERE STATE = #{1} ORDER BY createTime")
+    @Select(selectWebsiteNewsPrefix + " WHERE STATE = #{state} ORDER BY createTime")
     List<News> queryNewsesByState(Integer state);
 
     @Insert("INSERT INTO website_news ( ID          , TITLE   , INTRODUCTION    , CONTENT " +
@@ -35,7 +34,8 @@ public interface NewsDao {
             "      ,SHOW_TIME    = #{showTime}   " +
             "      ,STATE        = #{state}   " +
             "      ,UPDATE_TIME  = NOW()   " +
-            " WHERE ID           = #{id}")
+            " WHERE STATE       != 0" +
+            "   AND ID           = #{id}")
     int updateNews(News news);
 
     @UpdateProvider(type = MybatisInProvider.class, method = "changeNewsState")

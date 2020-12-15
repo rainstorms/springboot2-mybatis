@@ -17,7 +17,7 @@ public interface BannerDao {
             ", STATE state         , CREATE_TIME createTime, UPDATE_TIME updateTime" +
             "    FROM  website_banner ";
 
-    @Select(selectWebsiteBannerPrefix + " WHERE ID = #{id}")
+    @Select(selectWebsiteBannerPrefix + " WHERE STATE IN (1,2) AND ID = #{id}")
     Banner findBanner(String id);
 
     @Select(selectWebsiteBannerPrefix + " WHERE STATE IN (1,2) ORDER BY state ,sequenceNo ,createTime")
@@ -41,13 +41,15 @@ public interface BannerDao {
             "      ,START_TIME  = #{startTime}   " +
             "      ,END_TIME    = #{endTime}   " +
             "      ,UPDATE_TIME = NOW()   " +
-            " WHERE ID          = #{id}")
+            " WHERE STATE       IN (1,2) " +
+            "   AND ID          = #{id}")
     int updateBanner(Banner banner);
 
     @Update("update website_banner " +
-            "   SET SEQUENCE_NO    = #{sequenceNo}   " +
-            "      ,UPDATE_TIME    = NOW()   " +
-            " WHERE ID             = #{id}")
+            "   SET SEQUENCE_NO = #{sequenceNo}   " +
+            "      ,UPDATE_TIME = NOW()   " +
+            " WHERE STATE       IN (1,2) " +
+            "   AND ID          = #{id}")
     int updateBannerSequenceNo(Banner banner);
 
     @UpdateProvider(type = MybatisInProvider.class, method = "changeBannerState")

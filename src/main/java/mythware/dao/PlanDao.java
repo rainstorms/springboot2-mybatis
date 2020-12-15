@@ -15,17 +15,17 @@ public interface PlanDao {
             " ,CONTENT content ,COVER cover ,CATEGORY category ,STATE state ,CREATE_TIME createTime ,UPDATE_TIME updateTime " +
             "    FROM  website_plan ";
 
-    @Select(selectWebsitePlanPrefix + " WHERE ID = #{id}")
+    @Select(selectWebsitePlanPrefix + " WHERE STATE != 0 AND ID = #{id}")
     Plan findPlan(String id);
 
-    @Select(selectWebsitePlanPrefix + " WHERE STATE = #{1} AND CATEGORY = #{1} ORDER BY createTime")
+    @Select(selectWebsitePlanPrefix + " WHERE STATE = #{state} AND CATEGORY = #{category} ORDER BY createTime")
     List<Plan> queryPlanByCondition(Integer state, Integer category);
 
     @Insert("INSERT INTO website_plan ( ID          , TITLE   , INTRODUCTION    , CONTENT   , STATE " +
             "                         , CATEGORY    , COVER   , CREATE_TIME     , UPDATE_TIME )" +
             "                  VALUES (#{id}        ,#{title} ,#{introduction}  ,#{content} ,#{state}" +
             "                         ,#{category}  ,#{cover} ,NOW()            ,NOW()        )")
-    int addPlan(Plan news);
+    int addPlan(Plan plan);
 
     @Update("update website_plan " +
             "   SET TITLE        = #{title}   " +
@@ -35,8 +35,9 @@ public interface PlanDao {
             "      ,COVER        = #{cover}   " +
             "      ,STATE        = #{state}   " +
             "      ,UPDATE_TIME  = NOW()   " +
-            " WHERE ID           = #{id}")
-    int updatePlan(Plan news);
+            " WHERE STATE       != 0" +
+            "   AND ID           = #{id}")
+    int updatePlan(Plan plan);
 
     @UpdateProvider(type = MybatisInProvider.class, method = "changePlanState")
     int changePlanState(String id, Set<Integer> oldStates, Integer newState);

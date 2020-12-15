@@ -36,13 +36,15 @@ public interface RegionDao {
             "      ,EMAIL       = #{email}   " +
             "      ,POSITION    = #{position}   " +
             "      ,UPDATE_TIME = NOW()   " +
-            " WHERE ID          = #{id}")
+            " WHERE STATE       = 1 " +
+            "   AND ID          = #{id}")
     int updateRegion(Region region);
 
     @Update("update website_region " +
             "   SET STATE       = 0   " +
             "      ,UPDATE_TIME = NOW()   " +
-            " WHERE ID          = #{1}")
+            " WHERE STATE       = 1 " +
+            "   AND ID          = #{id}")
     int deleteRegion(String id);
 
 
