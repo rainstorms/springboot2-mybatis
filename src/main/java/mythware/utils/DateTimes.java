@@ -12,6 +12,7 @@ public interface DateTimes {
     }
 
     static String parseDateTime2yyyyMMddHHmmss(LocalDateTime dateTime) {
+        if (null == dateTime) return null;
         return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 

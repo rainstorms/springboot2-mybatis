@@ -44,9 +44,12 @@ public class PlanService {
         return dao.findPlan(id);
     }
 
-    public PageInfo<Plan> queryPlanByCondition(Integer state, Integer category, Page page) {
-        PageHelper.startPage(page);
-        List<Plan> plans = dao.queryPlanByCondition(state, category);
-        return new PageInfo<>(plans);
+    public PageInfo<Plan> queryPlanPageByCondition(Integer state, Integer category, Page page) {
+        return PageHelper.startPage(page)
+                .doSelectPageInfo(() -> queryPlanByCondition(state, category));
+    }
+
+    public List<Plan> queryPlanByCondition(Integer state, Integer category) {
+        return dao.queryPlanByCondition(state, category);
     }
 }

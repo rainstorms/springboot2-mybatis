@@ -97,7 +97,7 @@ public class PlanController {
         if (!validStates.contains(state))
             throw new RuntimeException("state 值不正确");
 
-        PageInfo<Plan> plans = service.queryPlanByCondition(state, dto.getCategory(), dto.getPage());
+        PageInfo<Plan> plans = service.queryPlanPageByCondition(state, dto.getCategory(), dto.getPage());
         return QueryPlansByConditionVo.convert(plans);
     }
 
@@ -109,7 +109,7 @@ public class PlanController {
      */
     @PostMapping("/queryShowPlans")
     public QueryShowPlansVo queryShowPlans(@RequestBody QueryShowPlansDto queryShowPlansDto) {
-        PageInfo<Plan> showPlans = service.queryPlanByCondition(Plan.PlanState.PUBLISHED.getCode()
+        PageInfo<Plan> showPlans = service.queryPlanPageByCondition(Plan.PlanState.PUBLISHED.getCode()
                 , queryShowPlansDto.getCategory(), queryShowPlansDto.getPage());
         return QueryShowPlansVo.convert(showPlans);
     }
