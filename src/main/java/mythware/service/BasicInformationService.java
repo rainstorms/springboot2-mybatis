@@ -13,10 +13,10 @@ public class BasicInformationService {
 
     @Transactional
     public int updateBasicInformation(BasicInformation basicInformation) {
-        return dao.updateBasicInformation(basicInformation);
+        return dao.updateById(basicInformation);
     }
 
-    public BasicInformation findBasicInformation() {
-        return dao.findBasicInformation();
+    public BasicInformation findBasicInformation(String id) {
+        return dao.selectById(id);
     }
 }

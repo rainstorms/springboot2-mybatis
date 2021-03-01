@@ -6,6 +6,7 @@ import org.springframework.beans.BeanUtils;
 
 @Data
 public class UpdateBasicInformationDto {
+    private String id; // 公司名称
     private String companyName; // 公司名称
     private String telephone; // 电话
     private String fax; // 传真

@@ -20,4 +20,8 @@ public interface DateTimes {
         return dateTime.format(DateTimeFormatter.ofPattern(pattern));
     }
 
+    static long currentTimeSeconds() {
+        long millis = System.currentTimeMillis();
+        return millis / 1000;
+    }
 }

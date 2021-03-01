@@ -1,6 +1,9 @@
 package mythware.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import mythware.domain.BasicInformation;
+import mythware.dto.IdDto;
 import mythware.dto.UpdateBasicInformationDto;
 import mythware.service.BasicInformationService;
 import mythware.vo.BasicInformationVo;
@@ -9,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@Api(tags = {"基本信息"})
 @RestController
 @RequestMapping("/BasicInformationController")
 public class BasicInformationController {
@@ -21,11 +25,7 @@ public class BasicInformationController {
     private static final int WRONG_EMAIL = 514;
     private static final int ADDRESS_EMPTY = 515;
 
-    /**
-     * 修改 basicInformation
-     *
-     * @return
-     */
+    @ApiOperation("修改")
     @PostMapping("/updateBasicInformation")
     public ResultVo updateBasicInformation(@RequestBody UpdateBasicInformationDto dto) {
         // 校验参数
@@ -56,15 +56,10 @@ public class BasicInformationController {
         return null;
     }
 
-
-    /**
-     * 详情
-     *
-     * @return
-     */
-    @GetMapping("/findBasicInformation")
-    public BasicInformationVo findBasicInformation() {
-        BasicInformation basicInformation = service.findBasicInformation();
+    @ApiOperation("详情")
+    @GetMapping("/findBasicInformation/{id}")
+    public BasicInformationVo findBasicInformation(@PathVariable String id) {
+        BasicInformation basicInformation = service.findBasicInformation(id);
         return BasicInformationVo.convert(basicInformation);
     }
 }

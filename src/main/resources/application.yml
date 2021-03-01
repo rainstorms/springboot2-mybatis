@@ -16,8 +16,15 @@ spring:
     url: jdbc:mysql://10.88.254.43:3306/mythware_website?useUnicode=true&&characterEncoding=UTF-8&connectTimeout=1000&autoReconnect=true&useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-mybatis:
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: delete_time
+      logic-delete-value: "unix_timestamp(now())"
+      logic-not-delete-value: 0
+  mapper-locations: classpath*:com/mythware/**/mapper/*.xml
   configuration:
+    mapUnderscoreToCamelCase: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 pagehelper:

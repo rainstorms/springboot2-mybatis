@@ -1,11 +1,11 @@
 package mythware.controller;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.google.common.collect.Sets;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import mythware.domain.Banner;
-import mythware.dto.EditBannerDto;
-import mythware.dto.EnableBannerDto;
-import mythware.dto.OrderBannerDto;
-import mythware.dto.OrderBannersDto;
+import mythware.dto.*;
 import mythware.service.BannerService;
 import mythware.utils.DateTimes;
 import mythware.vo.BannerVo;
@@ -16,10 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 
+@Api(tags = {"Banner"})
 @RestController
 @RequestMapping("/BannerController")
 public class BannerController {
@@ -30,15 +30,10 @@ public class BannerController {
     private static final int TITLE_SIZE_OVER_30 = 512;
     private static final int IMAGE_EMPTY = 513;
     private static final int WRONG_IMAGE_FORMAT = 514;
-    private static final int WRONG_TIME_FORMAT = 515;
     private static final int WRONG_TIME = 516;
 
-    /**
-     * 添加和修改banner
-     *
-     * @param bannerDto
-     * @return
-     */
+    @ApiOperation("添加和修改")
+    @ApiOperationSupport(order = 1)
     @PostMapping("/editBanner")
     public ResultVo editBanner(@RequestBody EditBannerDto bannerDto) {
         // 校验参数
@@ -91,75 +86,50 @@ public class BannerController {
         return null;
     }
 
-    private ResultVo checkTime(String time, String timeName) {
+    private ResultVo checkTime(Long time, String timeName) {
         if (null == time) return null;
 
-        LocalDateTime dateTime;
-        try {
-            dateTime = DateTimes.parseyyyyMMddHHmmssString(time);
-        } catch (Exception e) {
-            return ResultVo.fail(WRONG_TIME_FORMAT, "传入的" + timeName + "日期格式不正确");
-        }
-
-        if (LocalDateTime.now().isAfter(dateTime))
+        Long now = DateTimes.currentTimeSeconds();
+        if (now >= time)
             return ResultVo.fail(WRONG_TIME, timeName + "不能在当前时间之前");
 
         return null;
     }
 
-    /**
-     * 详情
-     *
-     * @param id
-     * @return
-     */
+    @ApiOperation("详情")
+    @ApiOperationSupport(order = 2)
     @GetMapping("/findBanner/{id}")
     public BannerVo findBanner(@PathVariable("id") String id) {
         Banner banner = service.findBanner(id);
         return BannerVo.convert(banner);
     }
 
-    /**
-     * 查询所有的banner
-     *
-     * @return
-     */
+    @ApiOperation("查询所有")
+    @ApiOperationSupport(order = 3)
     @GetMapping("/queryBanners")
     public List<BannerVo> queryBanners() {
         List<Banner> banners = service.queryBanners();
         return BannerVo.convert(banners);
     }
 
-    /**
-     * 查询所有的banner
-     *
-     * @return
-     */
+    @ApiOperation("查询所有展示的banner")
+    @ApiOperationSupport(order = 4)
     @GetMapping("/queryShowBanners")
     public List<QueryShowBannerVo> queryShowBanners() {
         List<Banner> banners = service.queryShowBanners();
         return QueryShowBannerVo.convert(banners);
     }
 
-    /**
-     * 删除banner
-     *
-     * @param id
-     * @return
-     */
-    @GetMapping("/deleteBanner/{id}")
-    public ResultVo deleteBanner(@PathVariable("id") String id) {
-        HashSet<Integer> oldState = Sets.newHashSet(Banner.BannerState.ENABLE.getCode(), Banner.BannerState.DISABLE.getCode());
-        int i = service.changeBannerState(id, oldState, Banner.BannerState.DELETE.getCode());
+    @ApiOperation("删除")
+    @ApiOperationSupport(order = 5)
+    @PostMapping("/deleteBanner")
+    public ResultVo deleteBanner(@RequestBody IdDto idDto) {
+        int i = service.deleteBanner(idDto.getId());
         return i > 0 ? ResultVo.ok("删除成功") : ResultVo.fail("删除失败");
     }
 
-    /**
-     * 启用禁用banner
-     *
-     * @param bannerDto
-     * @return
-     */
+    @ApiOperation("启用禁用")
+    @ApiOperationSupport(order = 6)
     @PostMapping("/enableBanner")
     public ResultVo enableBanner(@RequestBody EnableBannerDto bannerDto) {
         Integer newState = bannerDto.getState();
@@ -173,12 +143,8 @@ public class BannerController {
         return i > 0 ? ResultVo.ok("成功") : ResultVo.fail("失败");
     }
 
-    /**
-     * banner 排序
-     *
-     * @param orderBannerDto
-     * @return
-     */
+    @ApiOperation("排序")
+    @ApiOperationSupport(order = 7)
     @PostMapping("/orderBanners")
     public ResultVo orderBanners(@RequestBody OrderBannersDto orderBannerDto) {
         List<OrderBannerDto> orderBanners = orderBannerDto.getOrderBanners();
@@ -186,7 +152,7 @@ public class BannerController {
             return ResultVo.ok("排序成功");
 
         int i = service.orderBanners(OrderBannerDto.toOrderBanners(orderBanners));
-        return i > 0 ? ResultVo.ok("删除成功") : ResultVo.fail("删除失败");
+        return i > 0 ? ResultVo.ok("排序成功") : ResultVo.fail("排序失败");
     }
 
 }
