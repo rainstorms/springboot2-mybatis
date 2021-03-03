@@ -8,9 +8,9 @@ import org.springframework.beans.BeanUtils;
 @Data
 public class EditFaqDto {
     private String id;  // 主键
-    private int questionCategory; // 问题类别
+    private Integer questionCategory; // 问题类别
     private String question; // 问题
-    private int answerCategory; // 答案类别
+    private Integer answerCategory; // 答案类别
     private String answer; // 答案
 
     public Faq toAddFaq() {

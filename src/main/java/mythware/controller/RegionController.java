@@ -1,9 +1,12 @@
 package mythware.controller;
 
-import com.github.pagehelper.PageInfo;
-import mythware.domain.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import mythware.domain.PageModel;
 import mythware.domain.Region;
 import mythware.dto.EditRegionDto;
+import mythware.dto.IdDto;
 import mythware.service.RegionService;
 import mythware.vo.QueryRegionsVo;
 import mythware.vo.RegionVo;
@@ -12,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@Api(tags = {"大区管理"})
 @RestController
 @RequestMapping("/RegionController")
 public class RegionController {
@@ -23,12 +27,7 @@ public class RegionController {
     private static final int MOBILE_EMPTY = 513;
     private static final int WRONG_EMAIL = 514;
 
-    /**
-     * 添加和修改 region
-     *
-     * @param regionDto
-     * @return
-     */
+    @ApiOperation("添加和修改")
     @PostMapping("/editRegion")
     public ResultVo editRegion(@RequestBody EditRegionDto regionDto) {
         // 校验参数
@@ -63,38 +62,24 @@ public class RegionController {
     }
 
 
-    /**
-     * 详情
-     *
-     * @param id
-     * @return
-     */
+    @ApiOperation("详情")
     @GetMapping("/findRegion/{id}")
     public RegionVo findRegion(@PathVariable("id") String id) {
         Region region = service.findRegion(id);
         return RegionVo.convert(region);
     }
 
-    /**
-     * 查询所有有效 region
-     *
-     * @return
-     */
+    @ApiOperation("查询 - 首页展示 ")
     @PostMapping("/queryRegions")
-    public QueryRegionsVo queryRegions(@RequestBody Page page) {
-        PageInfo<Region> regions = service.queryRegions(page);
+    public QueryRegionsVo queryRegions(@RequestBody PageModel pageModel) {
+        IPage<Region> regions = service.queryRegions(pageModel);
         return QueryRegionsVo.convert(regions);
     }
 
-    /**
-     * 删除region
-     *
-     * @param id
-     * @return
-     */
-    @GetMapping("/deleteRegion/{id}")
-    public ResultVo deleteRegion(@PathVariable("id") String id) {
-        int i = service.deleteRegion(id);
+    @ApiOperation("删除")
+    @PostMapping("/deleteRegion")
+    public ResultVo deleteRegion(@RequestBody IdDto idDto) {
+        int i = service.deleteRegion(idDto.getId());
         return i > 0 ? ResultVo.ok("删除成功") : ResultVo.fail("删除失败");
     }
 

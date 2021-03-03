@@ -1,10 +1,13 @@
 package mythware.service;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import mythware.dao.NewsDao;
 import mythware.domain.News;
-import mythware.domain.Page;
+import mythware.domain.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,12 +21,12 @@ public class NewsService {
 
     @Transactional
     public int addNews(News banner) {
-        return dao.addNews(banner);
+        return dao.insert(banner);
     }
 
     @Transactional
     public int updateNews(News banner) {
-        return dao.updateNews(banner);
+        return dao.updateById(banner);
     }
 
     /**
@@ -36,15 +39,26 @@ public class NewsService {
      */
     @Transactional
     public int changeNewsState(String id, Set<Integer> oldState, Integer newState) {
-        return dao.changeNewsState(id, oldState, newState);
+        LambdaUpdateWrapper<News> w = Wrappers.lambdaUpdate();
+        w.eq(News::getId, id);
+        w.in(News::getState, oldState);
+        w.set(News::getState, newState);
+        return dao.update(null, w);
     }
 
     public News findNews(String id) {
-        return dao.findNews(id);
+        return dao.selectById(id);
     }
 
-    public PageInfo<News> queryNewsesByState(Integer state, Page page) {
-        PageHelper.startPage(page);
-        return new PageInfo<>(dao.queryNewsesByState(state));
+    public IPage<News> queryNewsesByState(Integer state, PageModel pageParams) {
+        Page<News> objectPage = new Page<>(pageParams.getPageNum(), pageParams.getPageSize());
+        LambdaQueryWrapper<News> w = Wrappers.lambdaQuery();
+        w.orderByAsc(News::getCreateTime);
+        w.eq(News::getState, state);
+        return dao.selectPage(objectPage, w);
+    }
+
+    public int deleteNews(String id) {
+        return dao.deleteById(id);
     }
 }

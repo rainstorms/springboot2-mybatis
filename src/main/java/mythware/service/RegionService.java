@@ -1,15 +1,15 @@
 package mythware.service;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import mythware.dao.RegionDao;
-import mythware.domain.Page;
+import mythware.domain.PageModel;
 import mythware.domain.Region;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class RegionService {
@@ -18,26 +18,27 @@ public class RegionService {
 
     @Transactional
     public int addRegion(Region region) {
-        return dao.addRegion(region);
+        return dao.insert(region);
     }
 
     @Transactional
     public int updateRegion(Region region) {
-        return dao.updateRegion(region);
+        return dao.updateById(region);
     }
 
     @Transactional
     public int deleteRegion(String id) {
-        return dao.deleteRegion(id);
+        return dao.deleteById(id);
     }
 
     public Region findRegion(String id) {
-        return dao.findRegion(id);
+        return dao.selectById(id);
     }
 
-    public PageInfo<Region> queryRegions(Page page) {
-        PageHelper.startPage(page);
-        List<Region> regions = dao.queryRegions();
-        return new PageInfo<>(regions);
+    public IPage<Region> queryRegions(PageModel pageParams) {
+        Page<Region> objectPage = new Page<>(pageParams.getPageNum(), pageParams.getPageSize());
+        LambdaQueryWrapper<Region> w = Wrappers.lambdaQuery();
+        w.orderByAsc(Region::getCreateTime);
+        return dao.selectPage(objectPage, w);
     }
 }

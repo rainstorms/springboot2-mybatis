@@ -1,5 +1,6 @@
 package mythware.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import mythware.domain.Region;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Mapper
 @Repository
-public interface RegionDao {
+public interface RegionDao extends BaseMapper<Region> {
 
     String selectWebsiteRegionPrefix = "SELECT  ID id ,REGION region ,NAME name" +
             " ,MOBILE mobile ,EMAIL email ,POSITION position ,STATE state ,CREATE_TIME createTime ,UPDATE_TIME updateTime " +

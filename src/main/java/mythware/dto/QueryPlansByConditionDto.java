@@ -1,11 +1,11 @@
 package mythware.dto;
 
 import lombok.Data;
-import mythware.domain.Page;
+import mythware.domain.PageModel;
 
 @Data
 public class QueryPlansByConditionDto {
-    private Page page;
+    private PageModel pageModel;
     private Integer state;
     private Integer category;
 }

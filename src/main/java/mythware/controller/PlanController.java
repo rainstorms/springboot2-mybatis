@@ -1,8 +1,11 @@
 package mythware.controller;
 
-import com.github.pagehelper.PageInfo;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import mythware.domain.Plan;
 import mythware.dto.EditPlanDto;
+import mythware.dto.IdDto;
 import mythware.dto.QueryPlansByConditionDto;
 import mythware.dto.QueryShowPlansDto;
 import mythware.service.PlanService;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 
+@Api(tags = {"案例"})
 @RestController
 @RequestMapping("/PlanController")
 public class PlanController {
@@ -28,12 +32,7 @@ public class PlanController {
     private static final int CONTENT_EMPTY = 514;
     private static final int WRONG_STATE = 515;
 
-    /**
-     * 添加和修改plan
-     *
-     * @param planDto
-     * @return
-     */
+    @ApiOperation("添加和修改")
     @PostMapping("/editPlan")
     public ResultVo editPlan(@RequestBody EditPlanDto planDto) {
         // 校验参数
@@ -72,24 +71,14 @@ public class PlanController {
         return null;
     }
 
-
-    /**
-     * 详情
-     *
-     * @param id
-     * @return
-     */
+    @ApiOperation("详情")
     @GetMapping("/findPlan/{id}")
     public PlanVo findPlan(@PathVariable("id") String id) {
         Plan plan = service.findPlan(id);
         return PlanVo.convert(plan);
     }
 
-    /**
-     * 按状态和分类 条件查询 plan
-     *
-     * @return
-     */
+    @ApiOperation("查询 - 按状态和分类查 ")
     @PostMapping("/queryPlansByCondition")
     public QueryPlansByConditionVo queryPlanByCondition(@RequestBody QueryPlansByConditionDto dto) {
         Integer state = dto.getState();
@@ -97,33 +86,22 @@ public class PlanController {
         if (!validStates.contains(state))
             throw new RuntimeException("state 值不正确");
 
-        PageInfo<Plan> plans = service.queryPlanPageByCondition(state, dto.getCategory(), dto.getPage());
+        IPage<Plan> plans = service.queryPlanPageByCondition(state, dto.getCategory(), dto.getPageModel());
         return QueryPlansByConditionVo.convert(plans);
     }
 
-    /**
-     * 首页 展示查询接口
-     *
-     * @param queryShowPlansDto
-     * @return
-     */
+    @ApiOperation("查询 - 首页展示 ")
     @PostMapping("/queryShowPlans")
     public QueryShowPlansVo queryShowPlans(@RequestBody QueryShowPlansDto queryShowPlansDto) {
-        PageInfo<Plan> showPlans = service.queryPlanPageByCondition(Plan.PlanState.PUBLISHED.getCode()
-                , queryShowPlansDto.getCategory(), queryShowPlansDto.getPage());
+        IPage<Plan> showPlans = service.queryPlanPageByCondition(Plan.PlanState.PUBLISHED.getCode()
+                , queryShowPlansDto.getCategory(), queryShowPlansDto.getPageModel());
         return QueryShowPlansVo.convert(showPlans);
     }
 
-    /**
-     * 删除plan
-     *
-     * @param id
-     * @return
-     */
-    @GetMapping("/deletePlan/{id}")
-    public ResultVo deletePlan(@PathVariable("id") String id) {
-        HashSet<Integer> validStates = Plan.getValidStates();
-        int i = service.changePlanState(id, validStates, Plan.PlanState.DELETE.getCode());
+    @ApiOperation("删除")
+    @PostMapping("/deletePlan/{id}")
+    public ResultVo deletePlan(@RequestBody IdDto idDto) {
+        int i = service.deletePlan(idDto.getId());
         return i > 0 ? ResultVo.ok("删除成功") : ResultVo.fail("删除失败");
     }
 

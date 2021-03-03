@@ -1,10 +1,13 @@
 package mythware.controller;
 
-import com.github.pagehelper.PageInfo;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.google.common.collect.Sets;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import mythware.domain.News;
-import mythware.domain.Page;
+import mythware.domain.PageModel;
 import mythware.dto.EditNewsDto;
+import mythware.dto.IdDto;
 import mythware.dto.QueryNewsesByStateDto;
 import mythware.service.NewsService;
 import mythware.vo.NewsVo;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 
+@Api(tags = {"新闻"})
 @RestController
 @RequestMapping("/NewsController")
 public class NewsController {
@@ -29,12 +33,7 @@ public class NewsController {
     private static final int CONTENT_EMPTY = 514;
     private static final int WRONG_STATE = 515;
 
-    /**
-     * 添加和修改 news
-     *
-     * @param newsDto
-     * @return
-     */
+    @ApiOperation("添加和修改")
     @PostMapping("/editNews")
     public ResultVo editNews(@RequestBody EditNewsDto newsDto) {
         // 校验参数
@@ -74,23 +73,14 @@ public class NewsController {
     }
 
 
-    /**
-     * 详情
-     *
-     * @param id
-     * @return
-     */
+    @ApiOperation("详情")
     @GetMapping("/findNews/{id}")
     public NewsVo findNews(@PathVariable("id") String id) {
         News news = service.findNews(id);
         return NewsVo.convert(news);
     }
 
-    /**
-     * 按状态查询 news
-     *
-     * @return
-     */
+    @ApiOperation("查询 - 按状态查 ")
     @PostMapping("/queryNewsesByState")
     public QueryNewsesByStateVo queryNewsesByState(@RequestBody QueryNewsesByStateDto dto) {
         Integer state = dto.getState();
@@ -98,45 +88,29 @@ public class NewsController {
         if (!validStates.contains(state))
             throw new RuntimeException("state 值不正确");
 
-        PageInfo<News> news = service.queryNewsesByState(state, dto.getPage());
+        IPage<News> news = service.queryNewsesByState(state, dto.getPageModel());
         return QueryNewsesByStateVo.convert(news);
     }
 
-    /**
-     * 首页查询展示的新闻
-     *
-     * @param page
-     * @return
-     */
+    @ApiOperation("查询 - 首页展示 ")
     @PostMapping("/queryShowNewses")
-    public QueryShowNewsesVo queryShowNewses(@RequestBody Page page) {
-        PageInfo<News> news = service.queryNewsesByState(News.NewsState.PUBLISHED.getCode(), page);
+    public QueryShowNewsesVo queryShowNewses(@RequestBody PageModel pageModel) {
+        IPage<News> news = service.queryNewsesByState(News.NewsState.PUBLISHED.getCode(), pageModel);
         return QueryShowNewsesVo.convert(news);
     }
 
-    /**
-     * 发布 news
-     *
-     * @param id
-     * @return
-     */
+    @ApiOperation("查询 - 发布 ")
     @GetMapping("/publishNews/{id}")
     public ResultVo publishNews(@PathVariable("id") String id) {
         HashSet<Integer> validStates = Sets.newHashSet(News.NewsState.SAVED.getCode());
         int i = service.changeNewsState(id, validStates, News.NewsState.PUBLISHED.getCode());
-        return i > 0 ? ResultVo.ok("删除成功") : ResultVo.fail("删除失败");
+        return i > 0 ? ResultVo.ok("发布成功") : ResultVo.fail("发布失败");
     }
 
-    /**
-     * 删除news
-     *
-     * @param id
-     * @return
-     */
-    @GetMapping("/deleteNews/{id}")
-    public ResultVo deleteNews(@PathVariable("id") String id) {
-        HashSet<Integer> validStates = News.getValidStates();
-        int i = service.changeNewsState(id, validStates, News.NewsState.DELETE.getCode());
+    @ApiOperation("删除")
+    @PostMapping("/deleteNews/{id}")
+    public ResultVo deleteNews(@RequestBody IdDto idDto) {
+        int i = service.deleteNews(idDto.getId());
         return i > 0 ? ResultVo.ok("删除成功") : ResultVo.fail("删除失败");
     }
 

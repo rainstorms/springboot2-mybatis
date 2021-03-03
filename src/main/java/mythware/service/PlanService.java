@@ -1,16 +1,15 @@
 package mythware.service;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import mythware.dao.PlanDao;
-import mythware.domain.Page;
+import mythware.domain.PageModel;
 import mythware.domain.Plan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Set;
 
 @Service
 public class PlanService {
@@ -19,37 +18,29 @@ public class PlanService {
 
     @Transactional
     public int addPlan(Plan plan) {
-        return dao.addPlan(plan);
+        return dao.insert(plan);
     }
 
     @Transactional
     public int updatePlan(Plan plan) {
-        return dao.updatePlan(plan);
-    }
-
-    /**
-     * 修改 plan state
-     *
-     * @param id
-     * @param oldState 原来的state 状态管理：原状态不对不能修改
-     * @param newState 要改成的新的state
-     * @return
-     */
-    @Transactional
-    public int changePlanState(String id, Set<Integer> oldState, Integer newState) {
-        return dao.changePlanState(id, oldState, newState);
+        return dao.updateById(plan);
     }
 
     public Plan findPlan(String id) {
-        return dao.findPlan(id);
+        return dao.selectById(id);
     }
 
-    public PageInfo<Plan> queryPlanPageByCondition(Integer state, Integer category, Page page) {
-        return PageHelper.startPage(page)
-                .doSelectPageInfo(() -> queryPlanByCondition(state, category));
+    public IPage<Plan> queryPlanPageByCondition(Integer state, Integer category, PageModel pageParams) {
+        Page<Plan> objectPage = new Page<>(pageParams.getPageNum(), pageParams.getPageSize());
+        LambdaQueryWrapper<Plan> w = Wrappers.lambdaQuery();
+        w.orderByAsc(Plan::getCreateTime);
+        w.eq(Plan::getState, state);
+        w.eq(Plan::getCategory, category);
+        return dao.selectPage(objectPage, w);
     }
 
-    public List<Plan> queryPlanByCondition(Integer state, Integer category) {
-        return dao.queryPlanByCondition(state, category);
+    @Transactional
+    public int deletePlan(String id) {
+        return dao.deleteById(id);
     }
 }

@@ -11,8 +11,8 @@ public class PlanVo {
     private String introduction; // 简介
     private String content; // 内容
     private String cover; // 封面
-    private int category; // 类别 1中小学 2高中 3其它
-    private int state; // 状态 详情见 PlanState
+    private Integer category; // 类别 1中小学 2高中 3其它
+    private Integer state; // 状态 详情见 PlanState
 
     public static PlanVo convert(Plan plan) {
         if (null == plan) return null;

@@ -1,16 +1,16 @@
 package mythware.service;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import mythware.dao.FaqDao;
-import mythware.domain.Page;
 import mythware.domain.Faq;
+import mythware.domain.PageModel;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Set;
 
 @Service
 public class FaqService {
@@ -19,40 +19,37 @@ public class FaqService {
 
     @Transactional
     public int addFaq(Faq faq) {
-        return dao.addFaq(faq);
+        return dao.insert(faq);
     }
 
     @Transactional
     public int updateFaq(Faq faq) {
-        return dao.updateFaq(faq);
-    }
-
-    /**
-     * 修改 faq state
-     *
-     * @param id
-     * @param oldState 原来的state 状态管理：原状态不对不能修改
-     * @param newState 要改成的新的state
-     * @return
-     */
-    @Transactional
-    public int changeFaqState(String id, Integer oldState, Integer newState) {
-        return dao.changeFaqState(id, oldState, newState);
+        return dao.updateById(faq);
     }
 
     public Faq findFaq(String id) {
-        return dao.findFaq(id);
+        return dao.selectById(id);
     }
 
-    public PageInfo<Faq> queryFaqByCategory(Integer category, Page page) {
-        PageHelper.startPage(page);
-        List<Faq> faqs = dao.queryFaqByCategory(category);
-        return new PageInfo<>(faqs);
+    public IPage<Faq> queryFaqByCategory(Integer category, PageModel pageParams) {
+        Page<Faq> objectPage = new Page<>(pageParams.getPageNum(), pageParams.getPageSize());
+        LambdaQueryWrapper<Faq> w = Wrappers.lambdaQuery();
+        w.eq(Faq::getQuestionCategory, category);
+        w.orderByAsc(Faq::getCreateTime);
+        return dao.selectPage(objectPage, w);
     }
 
-    public PageInfo<Faq> queryFaqByCondition(Integer category, String searchValue, Page page) {
-        PageHelper.startPage(page);
-        List<Faq> faqs = dao.queryFaqByCondition(category, searchValue);
-        return new PageInfo<>(faqs);
+    public IPage<Faq> queryFaqByCondition(Integer category, String searchValue, PageModel pageParams) {
+        LambdaQueryWrapper<Faq> w = Wrappers.lambdaQuery();
+        w.eq(category != 0, Faq::getQuestionCategory, category);
+        w.like(StringUtils.isNotEmpty(searchValue), Faq::getQuestion, searchValue);
+        w.orderByAsc(Faq::getCreateTime);
+        Page<Faq> objectPage = new Page<>(pageParams.getPageNum(), pageParams.getPageSize());
+        return dao.selectPage(objectPage, w);
+    }
+
+    @Transactional
+    public int deleteFaq(String id) {
+        return dao.deleteById(id);
     }
 }

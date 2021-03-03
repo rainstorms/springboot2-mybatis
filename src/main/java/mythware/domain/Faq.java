@@ -1,21 +1,34 @@
 package mythware.domain;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Sets;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data @Builder @AllArgsConstructor @NoArgsConstructor
+@TableName(value = "website_faq")
 public class Faq {
     private String id;  // 主键
-    private int questionCategory; // 问题类别
+    private Integer questionCategory; // 问题类别
     private String question; // 问题
-    private int answerCategory; // 答案类别
+    private Integer answerCategory; // 答案类别
     private String answer; // 答案
-    private int state; // 状态 详情见 FaqState
-    private LocalDateTime createTime; // 创建时间
-    private LocalDateTime updateTime; // 更新时间
+
+    @TableField(fill = FieldFill.INSERT)
+    public Long createTime;
+
+    @JsonIgnore
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    public Long updateTime;
+
+    @JsonIgnore
+    @TableLogic
+    public Long deleteTime;
 
     public static Set<Integer> getValidAnswerCategories() {
         return Sets.newHashSet(AnswerCategory.LINK.code, AnswerCategory.WORD.code);
@@ -25,16 +38,6 @@ public class Faq {
         return Sets.newHashSet(QuestionCategory.教室云盒.code, QuestionCategory.电子书包课堂管理系统.code,
                 QuestionCategory.电子教室系统.code, QuestionCategory.数字语音系统.code, QuestionCategory.平板云管理.code,
                 QuestionCategory.平板云防盗.code, QuestionCategory.ClassHub.code);
-    }
-
-    @AllArgsConstructor @NoArgsConstructor
-    public enum FaqState {
-        DELETE(0, "删除"),
-        NORMAL(1, "正常");
-
-        @Getter
-        Integer code;
-        String desc;
     }
 
     @AllArgsConstructor @NoArgsConstructor

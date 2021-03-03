@@ -1,8 +1,11 @@
 package mythware.controller;
 
-import com.github.pagehelper.PageInfo;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import mythware.domain.Faq;
 import mythware.dto.EditFaqDto;
+import mythware.dto.IdDto;
 import mythware.dto.QueryFaqsByQuestionCategoryDto;
 import mythware.dto.QueryShowFaqsDto;
 import mythware.service.FaqService;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
+@Api(tags = {"技术支持"})
 @RestController
 @RequestMapping("/FaqController")
 public class FaqController {
@@ -26,12 +30,7 @@ public class FaqController {
     private static final int ANSWER_EMPTY = 513;
     private static final int WRONG_ANSWER_CATEGORIES = 515;
 
-    /**
-     * 添加和修改faq
-     *
-     * @param faqDto
-     * @return
-     */
+    @ApiOperation("添加和修改")
     @PostMapping("/editFaq")
     public ResultVo editFaq(@RequestBody EditFaqDto faqDto) {
         // 校验参数
@@ -68,23 +67,14 @@ public class FaqController {
     }
 
 
-    /**
-     * 详情
-     *
-     * @param id
-     * @return
-     */
+    @ApiOperation("详情")
     @GetMapping("/findFaq/{id}")
     public FaqVo findFaq(@PathVariable("id") String id) {
         Faq faq = service.findFaq(id);
         return FaqVo.convert(faq);
     }
 
-    /**
-     * 按问题分类 条件查询 faq
-     *
-     * @return
-     */
+    @ApiOperation("查询 - 按问题分类查 ")
     @PostMapping("/queryFaqsByQuestionCategory")
     public QueryFaqsByConditionVo queryFaqs(@RequestBody QueryFaqsByQuestionCategoryDto dto) {
         Integer category = dto.getCategory();
@@ -92,16 +82,11 @@ public class FaqController {
         if (!validStates.contains(category))
             throw new RuntimeException("question category 值不正确");
 
-        PageInfo<Faq> faqs = service.queryFaqByCategory(category, dto.getPage());
+        IPage<Faq> faqs = service.queryFaqByCategory(category, dto.getPage());
         return QueryFaqsByConditionVo.convert(faqs);
     }
 
-    /**
-     * 首页 展示查询接口
-     *
-     * @param queryShowFaqsDto
-     * @return
-     */
+    @ApiOperation("查询 - 首页展示 ")
     @PostMapping("/queryShowFaqs")
     public QueryFaqsByConditionVo queryShowFaqs(@RequestBody QueryShowFaqsDto queryShowFaqsDto) {
         Integer category = queryShowFaqsDto.getCategory();
@@ -110,20 +95,15 @@ public class FaqController {
         if (!validStates.contains(category))
             throw new RuntimeException("category 值不正确");
 
-        PageInfo<Faq> showFaqs = service.queryFaqByCondition(category, queryShowFaqsDto.getSearchValue(),
+        IPage<Faq> showFaqs = service.queryFaqByCondition(category, queryShowFaqsDto.getSearchValue(),
                 queryShowFaqsDto.getPage());
         return QueryFaqsByConditionVo.convert(showFaqs);
     }
 
-    /**
-     * 删除faq
-     *
-     * @param id
-     * @return
-     */
-    @GetMapping("/deleteFaq/{id}")
-    public ResultVo deleteFaq(@PathVariable("id") String id) {
-        int i = service.changeFaqState(id, Faq.FaqState.NORMAL.getCode(), Faq.FaqState.DELETE.getCode());
+    @ApiOperation("删除")
+    @PostMapping("/deleteFaq")
+    public ResultVo deleteFaq(@RequestBody IdDto idDto) {
+        int i = service.deleteFaq(idDto.getId());
         return i > 0 ? ResultVo.ok("删除成功") : ResultVo.fail("删除失败");
     }
 

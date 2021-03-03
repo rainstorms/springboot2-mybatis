@@ -1,24 +1,24 @@
 package mythware.vo;
 
-import com.github.pagehelper.PageInfo;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import mythware.domain.Faq;
-import mythware.domain.Page;
+import mythware.domain.PageModel;
 
 import java.util.List;
 
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
 public class QueryFaqsByConditionVo {
     private List<FaqVo> faq;
-    private Page page;
+    private PageModel pageModel;
 
-    public static QueryFaqsByConditionVo convert(PageInfo<Faq> pageInfo) {
+    public static QueryFaqsByConditionVo convert(IPage<Faq> pageInfo) {
         return QueryFaqsByConditionVo.builder()
-                .page(Page.convert(pageInfo))
-                .faq(FaqVo.convert(pageInfo.getList()))
+                .pageModel(PageModel.convert(pageInfo))
+                .faq(FaqVo.convert(pageInfo.getRecords()))
                 .build();
     }
 }

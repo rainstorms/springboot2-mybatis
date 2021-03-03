@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashSet;
 import java.util.List;
 
-@Api(tags = {"Banner"})
+@Api(tags = {"首页 Banner"})
 @RestController
 @RequestMapping("/BannerController")
 public class BannerController {
@@ -104,7 +104,7 @@ public class BannerController {
         return BannerVo.convert(banner);
     }
 
-    @ApiOperation("查询所有")
+    @ApiOperation("查询 - 所有")
     @ApiOperationSupport(order = 3)
     @GetMapping("/queryBanners")
     public List<BannerVo> queryBanners() {
@@ -112,7 +112,7 @@ public class BannerController {
         return BannerVo.convert(banners);
     }
 
-    @ApiOperation("查询所有展示的banner")
+    @ApiOperation("查询 - 用于展示的")
     @ApiOperationSupport(order = 4)
     @GetMapping("/queryShowBanners")
     public List<QueryShowBannerVo> queryShowBanners() {

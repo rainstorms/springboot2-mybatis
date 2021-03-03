@@ -1,11 +1,12 @@
 package mythware.vo;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.pagehelper.PageInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import mythware.domain.Page;
+import mythware.domain.PageModel;
 import mythware.domain.Plan;
 
 import java.util.List;
@@ -13,12 +14,12 @@ import java.util.List;
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
 public class QueryShowPlansVo {
     private List<PlanListVo> plans;
-    private Page page;
+    private PageModel pageModel;
 
-    public static QueryShowPlansVo convert(PageInfo<Plan> showPlans) {
-        List<Plan> plans = showPlans.getList();
+    public static QueryShowPlansVo convert(IPage<Plan> showPlans) {
+        List<Plan> plans = showPlans.getRecords();
         return QueryShowPlansVo.builder()
-                .page(Page.convert(showPlans))
+                .pageModel(PageModel.convert(showPlans))
                 .plans(PlanListVo.convert(plans))
                 .build();
     }

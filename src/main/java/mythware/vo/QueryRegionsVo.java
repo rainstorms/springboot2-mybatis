@@ -1,24 +1,24 @@
 package mythware.vo;
 
-import com.github.pagehelper.PageInfo;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import mythware.domain.Page;
+import mythware.domain.PageModel;
 import mythware.domain.Region;
 
 import java.util.List;
 
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
 public class QueryRegionsVo {
-    private Page page;
+    private PageModel pageModel;
     private List<RegionVo> regions;
 
-    public static QueryRegionsVo convert(PageInfo<Region> regions) {
+    public static QueryRegionsVo convert(IPage<Region> regions) {
         return QueryRegionsVo.builder()
-                .page(Page.convert(regions))
-                .regions(RegionVo.convert(regions.getList()))
+                .pageModel(PageModel.convert(regions))
+                .regions(RegionVo.convert(regions.getRecords()))
                 .build();
     }
 }
